@@ -50,7 +50,7 @@ stage('ZAP Security Scan') {
             curl "http://localhost:8095/JSON/spider/action/scan/?url=${appUrl}&recurse=true"
             """
             // Attendre 5 secondes avant de vérifier le status du spider
-            bat "timeout /t 5"
+            bat 'start /wait cmd /c "echo Waiting for 5 seconds... && timeout /t 5"'
             
             // Vérifier le status du spider
             bat """
@@ -58,14 +58,14 @@ stage('ZAP Security Scan') {
             """
             
             // Attendre 60 secondes avant de démarrer l'Active Scan
-            bat "timeout /t 60"
+            bat 'start /wait cmd /c "echo Waiting for 60 seconds... && timeout /t 60"'
 
             // Lancer l'active scan après que le spider soit terminé
             bat """
             curl "http://localhost:8095/JSON/ascan/action/scan/?url=${appUrl}&recurse=true"
             """
             // Attendre 300 secondes pour l'Active Scan
-            bat "timeout /t 300"
+            bat 'start /wait cmd /c "echo Waiting for 300 seconds... && timeout /t 300"'
         }
     }
 
@@ -76,6 +76,7 @@ stage('ZAP Security Scan') {
         }
     }
 }
+
 
 
 
