@@ -48,14 +48,16 @@ stage('ZAP Security Scan') {
             // Lancer le scan du spider avec ZAP
             bat """
             curl "http://localhost:8095/JSON/spider/action/scan/?url=${appUrl}&recurse=true"
-            timeout /t 60 /nobreak
             """
+            // Attendre 60 secondes avant de démarrer l'Active Scan
+            bat "timeout /t 60 /nobreak"
 
             // Lancer l'active scan après que le spider soit terminé
             bat """
             curl "http://localhost:8095/JSON/ascan/action/scan/?url=${appUrl}&recurse=true"
-            timeout /t 300 /nobreak
             """
+            // Attendre 300 secondes pour l'Active Scan
+            bat "timeout /t 300 /nobreak"
         }
     }
 
@@ -66,6 +68,7 @@ stage('ZAP Security Scan') {
         }
     }
 }
+
 
 
         stage('Build') {
