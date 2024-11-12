@@ -3,7 +3,8 @@ pipeline {
 
      environment {
         // Ensure Docker and Maven paths are properly set
-        PATH = "C:\\WINDOWS\\SYSTEM32;C:\\Program Files\\Docker\\Docker\\resources\\bin"
+        PATH = "C:\\WINDOWS\\SYSTEM32;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\ProgramData\\chocolatey\\bin;${env.PATH}"
+
     }
      tools {
         maven 'Maven' // Ensure Maven is installed in Jenkins
