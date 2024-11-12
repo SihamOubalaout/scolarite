@@ -42,7 +42,7 @@ pipeline {
                             ${scannerHome}\\bin\\sonar-scanner.bat ^
                             -Dsonar.projectKey=scola ^
                            -Dsonar.host.url=http://localhost:9000 ^
-                           -Dsonar.login=sqp_7bc3c51e5c1bdfe305a841f22dd7908937f7649b ^
+                           -Dsonar.login=sqp_498f483735a3503644f80fb4cb8cee88716e735c ^
                             -Dsonar.sources=./src ^
                             -Dsonar.java.binaries=./target/classes
                         """
