@@ -16,7 +16,16 @@ pipeline {
             }
         }
 
-      
+      stage('Run Gitleaks') {
+            steps {
+                script {
+                    // Exécute Gitleaks pour vérifier les secrets dans le code source
+                    // Vous pouvez ajouter des options pour personnaliser le comportement de Gitleaks
+                    echo 'Running Gitleaks to detect secrets...'
+                    bat 'gitleaks detect --source=. --report-path=gitleaks-report.json'
+                }
+            }
+        }
 
        
 
