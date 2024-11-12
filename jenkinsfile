@@ -1,10 +1,12 @@
 pipeline {
     agent any
 
-    environment {
-        SONAR_PROJECT_KEY = 'FadwaLacham_scolarite'
-        SONAR_ORGANIZATION = 'fadwalacham'
-        SONAR_TOKEN = credentials('sonarcloud-token')
+     environment {
+        // Ensure Docker and Maven paths are properly set
+        PATH = "C:\\WINDOWS\\SYSTEM32;C:\\Program Files\\Docker\\Docker\\resources\\bin"
+    }
+     tools {
+        maven 'Maven' // Ensure Maven is installed in Jenkins
     }
 
     stages {
@@ -39,43 +41,9 @@ pipeline {
             }
         }
 
-stage('ZAP Security Scan') {
-    steps {
-        script {
-            // URL de l'application à scanner
-            def appUrl = 'https://ed3a-105-73-96-62.ngrok-free.app'
 
-            // Lancer le scan du spider avec ZAP
-            bat """
-            curl "http://localhost:8095/JSON/spider/action/scan/?url=${appUrl}&recurse=true"
-            """
-            // Attendre 5 secondes avant de vérifier le status du spider
-            bat 'start /wait cmd /c "echo Waiting for 5 seconds... && timeout /t 5"'
-            
-            // Vérifier le status du spider
-            bat """
-            curl -s "http://localhost:8095/JSON/spider/view/status/"
-            """
-            
-            // Attendre 60 secondes avant de démarrer l'Active Scan
-            bat 'start /wait cmd /c "echo Waiting for 60 seconds... && timeout /t 60"'
+   
 
-            // Lancer l'active scan après que le spider soit terminé
-            bat """
-            curl "http://localhost:8095/JSON/ascan/action/scan/?url=${appUrl}&recurse=true"
-            """
-            // Attendre 300 secondes pour l'Active Scan
-            bat 'start /wait cmd /c "echo Waiting for 300 seconds... && timeout /t 300"'
-        }
-    }
-
-    post {
-        always {
-            // Télécharger le rapport HTML de ZAP
-            bat 'curl "http://localhost:8095/OTHER/core/other/htmlreport/" > zap_report.html'
-        }
-    }
-}
 
 
 
@@ -86,20 +54,23 @@ stage('ZAP Security Scan') {
             }
         }
 
-        stage('SonarQube Analysis') {
+          stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarCloud') {
-                    bat """
-                    mvn sonar:sonar ^
-                      -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                      -Dsonar.organization=%SONAR_ORGANIZATION% ^
-                      -Dsonar.host.url=https://sonarcloud.io ^
-                      -Dsonar.login=%SONAR_TOKEN%
-                    """
+                script {
+                    def scannerHome = tool 'SonarScanner'
+                    withSonarQubeEnv('SonarQube') {
+                        bat """
+                            ${scannerHome}\\bin\\sonar-scanner.bat ^
+                            -Dsonar.projectKey=scola ^
+                           -Dsonar.host.url=http://localhost:9000 ^
+                           -Dsonar.login=sqp_7bc3c51e5c1bdfe305a841f22dd7908937f7649b ^
+                            -Dsonar.sources=./src ^
+                            -Dsonar.java.binaries=./target/classes
+                        """
+                    }
                 }
             }
         }
-
         stage('Quality Gate') {
             steps {
                 script {
